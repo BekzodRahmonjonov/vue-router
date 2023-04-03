@@ -1,5 +1,5 @@
 <template>
-  <div> welcome to products page </div>
+  <div> welcome to product single page </div>
 </template>
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";

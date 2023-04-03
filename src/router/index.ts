@@ -10,30 +10,41 @@ const router = createRouter({
       redirect: { name: 'Home' },
       children: [
         {
-          path: '/home',
+          path: '/',
           name: 'Home',
-          component: () => import('../views/HomeView.vue')
+          alias: '/home',
+          component: () => import('../views/HomeView.vue'),
+          meta: { roles: [ 'admin', 'user' ] }
         },
         {
           path: '/about',
           name: 'About',
-          component: () => import('../views/AboutView.vue')
+          component: () => import('../views/AboutView.vue'),
+          meta: { roles: [ 'admin', 'user' ] }
         },
         {
           path: '/products',
           name: 'Products',
-          component: () => import('../views/Products/PProducts.vue')
+          component: () => import('../views/Products/PProducts.vue'),
+          meta: { roles: [ 'admin', 'user' ] }
         },
         {
-          path: '/products/:ProductId',
+          path: '/products/:ProductId(\\d+)',
           name: 'ProductSingle',
-          component: () => import('../views/Products/PProductSingle.vue')
+          component: () => import('../views/Products/PProductSingle.vue'),
+          meta: { roles: [ 'admin' ] }
         },
         { path: '/user-:afterUser(.*)',
           name: 'User',
-          component: () => import('../views/User/PUserInfo.vue')
+          component: () => import('../views/User/PUserInfo.vue'),
+          meta: { roles: [ 'admin' ] }
         },
       ]
+    },
+    {
+      path: '/login', // 404
+      name: 'Login',
+      component: () => import('../views/Login/PLogin.vue')
     },
     // {
     //     path: '/:pathMatch(.*)*', // 404
@@ -44,8 +55,11 @@ const router = createRouter({
   ]
 })
 router.beforeEach((to, from, next) => {
-  // ...
-  // explicitly return false to cancel the navigation
+  const userRole = 'admin'
+    if (to.meta.roles && !to.meta.roles.includes(userRole)) {
+        next({ name: 'Login' })
+        return;
+    }
   next()
   return;
 })
